@@ -3,7 +3,7 @@ from dsp_modules import ExtractName, CheckDegree, ExtractAge
 from pipeline_manager import PipelineManager
 from metrics import exact_match_metric
 from dspy.teleprompt import MIPROv2
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Tuple
 
 # Instantiate DSPy modules
 extract_name = ExtractName()
