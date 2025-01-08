@@ -1,41 +1,64 @@
 # DSPy Pipeline Code Overview
 
-## Classes and Methods
+## Class Schemas
 
-### 1. ModuleFactory
-- `create_module(inputs: List[str], outputs: List[str], description: str = "") -> dspy.Module`
-  - Creates DSPy modules with specified inputs/outputs
-  - Generates appropriate signatures
-  - Returns Predict modules
+### ModuleFactory
+```python
+class ModuleFactory:
+    def create_module(inputs: List[str], outputs: List[str], description: str = "") -> dspy.Module
+```
 
-### 2. PipeFunction
-- `__init__()`
-  - Initializes pipeline manager and module factory
-- `optimize(optimized_pipeline: Any)`
-  - Sets pipeline as optimized
-  - Stores optimized pipeline
-- `__call__(*args, outputs: List[str] = None, modules: List[Any] = None) -> Tuple[Any, ...]`
-  - Main pipe interface
-  - Handles immediate execution
-  - Registers pipeline steps
+### PipeFunction
+```python
+class PipeFunction:
+    def __init__()
+    def optimize(optimized_pipeline: Any)
+    def __call__(*args, outputs: List[str] = None, modules: List[Any] = None) -> Tuple[Any, ...]
+```
 
-### 3. PipelineManager
-- `__new__()`
-  - Singleton pattern implementation
-  - Initializes pipeline steps and cache
-- `register_step(inputs: List[str], outputs: List[str], module: Any)`
-  - Registers pipeline steps
-  - Stores input/output mappings
-- `assemble_pipeline() -> dspy.Module`
-  - Creates executable pipeline
-  - Chains registered steps
-  - Returns Pipeline module
+### PipelineManager
+```python
+class PipelineManager:
+    def __new__() -> PipelineManager
+    def register_step(inputs: List[str], outputs: List[str], module: Any)
+    def assemble_pipeline() -> dspy.Module
+```
 
-### 4. Metrics
-- `exact_match_metric(gold: List[Any], pred: List[Any], trace=None) -> float`
-  - Calculates exact match accuracy
-  - Compares predicted vs ground truth values
-  - Returns accuracy score
+### Metrics
+```python
+def exact_match_metric(gold: List[Any], pred: List[Any], trace=None) -> float
+```
+
+## Class Relationships
+
+```mermaid
+classDiagram
+    class ModuleFactory {
+        +create_module()
+    }
+    
+    class PipeFunction {
+        +__init__()
+        +optimize()
+        +__call__()
+    }
+    
+    class PipelineManager {
+        +__new__()
+        +register_step()
+        +assemble_pipeline()
+    }
+    
+    class Metrics {
+        +exact_match_metric()
+    }
+    
+    PipeFunction --> ModuleFactory : uses
+    PipeFunction --> PipelineManager : uses
+    PipelineManager --> Metrics : uses
+    main --> PipeFunction : uses
+    main --> PipelineManager : uses
+```
 
 ## Key Features
 
