@@ -73,7 +73,7 @@ class PipeFunction:
         # Infer input names from args
         inputs = [f"input_{i+1}" for i in range(len(args))]
             
-        # Create module dynamically
+        # Create module dynamically with correct output name
         module = self._create_module(inputs, [output_name], description)
         
         # Create input dict
