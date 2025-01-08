@@ -54,9 +54,9 @@ class PipeFunction:
         inputs = [f"input_{i+1}" for i in range(len(args))]
         
         # Generate default description if none provided
-        if description is None:
-            input_types = [type(arg).__name__ for arg in args]
-            description = f"Processes {len(args)} inputs of types: {', '.join(input_types)}"
+        # if description is None:
+            # input_types = [type(arg).__name__ for arg in args]
+            # description = f"Processes {len(args)} inputs of types: {', '.join(input_types)}"
             
         # Use first word of description as output name
         output_name = description.lower().split()[0]
