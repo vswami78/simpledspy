@@ -41,13 +41,13 @@ class PipeFunction:
         # Default fallback
         return "output"
 
-    def __call__(self, *args, description: str = "") -> Tuple[Any, ...]:
+    def __call__(self, *args, description: str = None) -> Tuple[Any, ...]:
         """
         Executes a DSPy module with the given signature.
         
         Args:
             *args: Input arguments
-            description: Description of the module's purpose
+            description: Optional description of the module's purpose
             
         Returns:
             Tuple containing the outputs
@@ -55,8 +55,13 @@ class PipeFunction:
         # Infer input names from args
         inputs = [f"input_{i+1}" for i in range(len(args))]
         
+        # Generate default description if none provided
+        if description is None:
+            input_types = [type(arg).__name__ for arg in args]
+            description = f"Processes {len(args)} inputs of types: {', '.join(input_types)}"
+            
         # Infer output name from description
-        output_name = description.lower().split()[0] if description else "output"
+        output_name = description.lower().split()[0]
             
         # Create module dynamically
         module = self._create_module(inputs, [output_name], description)
