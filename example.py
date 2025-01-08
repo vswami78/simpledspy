@@ -1,6 +1,9 @@
 from pipe_function import pipe
 from module_factory import ModuleFactory
 
+# Configure language model (will be done automatically on first call if not configured)
+pipe.configure_lm()
+
 # Create word counter module
 module_factory = ModuleFactory()
 word_counter = module_factory.create_module(

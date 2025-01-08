@@ -1,9 +1,16 @@
 from typing import Any, Tuple, List
+import dspy
 from pipeline_manager import PipelineManager
 
 class PipeFunction:
     def __init__(self):
         self.pipeline_manager = PipelineManager()
+        self.lm = None
+
+    def configure_lm(self, model_name: str = "gpt-3.5-turbo"):
+        """Configure the language model to use"""
+        self.lm = dspy.OpenAI(model=model_name)
+        dspy.configure(lm=self.lm)
 
     def __call__(self, *args, modules: List[Any]) -> Tuple[Any, ...]:
         """
@@ -18,6 +25,10 @@ class PipeFunction:
         """
         if not modules:
             raise ValueError("Modules parameter is required")
+            
+        # Configure default LM if not already configured
+        if self.lm is None:
+            self.configure_lm()
             
         # Get outputs from module signatures
         outputs = []
