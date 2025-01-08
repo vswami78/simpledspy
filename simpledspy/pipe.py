@@ -52,8 +52,14 @@ class PipeFunction:
             
             # Find the input variable names
             input_names = []
+            # Get the local variables from the caller's frame
+            local_vars = set(outer_frame.f_locals.keys())
+            
+            # Scan bytecode for LOAD_NAME instructions that load local variables
             for instr in bytecode:
-                if instr.offset < outer_frame.f_lasti and instr.opname == 'LOAD_NAME':
+                if (instr.offset < outer_frame.f_lasti and 
+                    instr.opname == 'LOAD_NAME' and
+                    instr.argval in local_vars):
                     input_names.append(instr.argval)
             
             # Find the STORE_NAME opcode that follows our call
