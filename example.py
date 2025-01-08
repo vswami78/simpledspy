@@ -9,7 +9,7 @@ def combine_strings(text1: str, text2: str) -> str:
     return f"{text1} {text2}"
 
 # Process the inputs with concatenation
-combined = pipe(
+concatenated = pipe(
     input1, input2,
     inputs=["text1", "text2"],
     description="Concatenates two strings with a space between them"
@@ -18,7 +18,7 @@ combined = pipe(
 # Print results
 print(f"Input 1: {input1}")
 print(f"Input 2: {input2}")
-print(f"Combined: {combined[0]}")
+print(f"concatenated: {concatenated[0]}")
 
 # Example input text
 input_text = "This is a simple example text with seven words"
