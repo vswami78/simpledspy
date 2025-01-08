@@ -7,9 +7,9 @@ class PipeFunction:
     def __init__(self):
         self.pipeline_manager = PipelineManager()
         self.module_factory = ModuleFactory()
-        # Configure default LM
+        # Configure default LM with caching disabled
         self.lm = dspy.LM(model="deepseek/deepseek-chat")
-        dspy.configure(lm=self.lm)
+        dspy.configure(lm=self.lm, cache=False)
 
     def _create_module(self, inputs: List[str], outputs: List[str], description: str = "") -> dspy.Module:
         """Create a DSPy module with the given signature."""
