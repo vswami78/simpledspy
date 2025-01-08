@@ -1,17 +1,33 @@
-from typing import List
 import dspy
+from typing import List, Dict, Any
 
 class ModuleFactory:
     def create_module(self, inputs: List[str], outputs: List[str], description: str = "") -> dspy.Module:
-        class DynamicModule(dspy.Module):
-            def __init__(self):
-                super().__init__()
-                self.input_fields = inputs
-                self.output_fields = outputs
+        """
+        Creates a DSPy module with specified inputs and outputs.
+        
+        Args:
+            inputs: List of input field names
+            outputs: List of output field names
+            description: Optional description of the module's purpose
+            
+        Returns:
+            dspy.Module: Configured DSPy module
+        """
+        # Create signature fields
+        signature_fields = {}
+        for inp in inputs:
+            signature_fields[inp] = dspy.InputField(desc=f"Input field {inp}")
+        for outp in outputs:
+            signature_fields[outp] = dspy.OutputField(desc=f"Output field {outp}")
 
-            def forward(self, *args):
-                if len(self.output_fields) == 1:
-                    return args[0]
-                return args
+        # Create signature class
+        Signature = type(
+            'Signature',
+            (dspy.Signature,),
+            {'__doc__': description, **signature_fields}
+        )
 
-        return DynamicModule()
+        # Create and return Predict module
+        print("Signature:", Signature)
+        return dspy.Predict(Signature)
