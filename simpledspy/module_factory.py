@@ -10,6 +10,8 @@ class ModuleFactory:
                 self.output_fields = outputs
 
             def forward(self, *args):
-                return {output: arg for arg, output in zip(args, self.output_fields)}
+                if len(self.output_fields) == 1:
+                    return args[0]
+                return args
 
         return DynamicModule()

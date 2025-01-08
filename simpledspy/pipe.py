@@ -41,6 +41,9 @@ class PipeFunction:
             module=module
         )
         
-        return module(*args, **kwargs)
+        result = module(*args, **kwargs)
+        if isinstance(result, dict):
+            return next(iter(result.values()))
+        return result
 
 pipe = PipeFunction()

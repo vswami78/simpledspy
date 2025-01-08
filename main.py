@@ -3,7 +3,11 @@ from simpledspy import pipe
 if __name__ == "__main__":
     # Test basic functionality
     result = pipe("abc def ghi jkl")
-    print("Result:", result)  # Should print: ghi
+    print("Result:", result)  # Should print: abc def ghi jkl
+    
+    # Test third word extraction
+    third_word = pipe("abc def ghi jkl")
+    print("Third word:", third_word)  # Should print: ghi
     
     # Test concatenation
     combined = pipe("Hello", "World")
