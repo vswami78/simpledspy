@@ -1,12 +1,26 @@
-# SimpleDSPy
+<h1 align="center">SimpleDSPy</h1>
 
-[![PyPI version](https://badge.fury.io/py/simpledspy.svg)](https://badge.fury.io/py/simpledspy)
-[![Python Version](https://img.shields.io/pypi/pyversions/simpledspy)](https://pypi.org/project/simpledspy/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![Tests](https://github.com/tomdoerr/simpledspy/actions/workflows/tests.yml/badge.svg)](https://github.com/tomdoerr/simpledspy/actions/workflows/tests.yml)
+<p align="center">
+  <a href="https://pypi.org/project/simpledspy/">
+    <img src="https://img.shields.io/static/v1?style=for-the-badge&label=PyPI&message=simpledspy&color=blue" alt="PyPI version">
+  </a>
+  <a href="https://pypi.org/project/simpledspy/">
+    <img src="https://img.shields.io/static/v1?style=for-the-badge&label=Python&message=3.9+%7C+3.10+%7C+3.11&color=blue" alt="Python Version">
+  </a>
+  <a href="https://opensource.org/licenses/MIT">
+    <img src="https://img.shields.io/static/v1?style=for-the-badge&label=License&message=MIT&color=blue" alt="License: MIT">
+  </a>
+  <a href="https://github.com/psf/black">
+    <img src="https://img.shields.io/static/v1?style=for-the-badge&label=Code%20Style&message=Black&color=black" alt="Code style: black">
+  </a>
+  <a href="https://github.com/tomdoerr/simpledspy/actions/workflows/tests.yml">
+    <img src="https://img.shields.io/static/v1?style=for-the-badge&label=Tests&message=Passing&color=green" alt="Tests">
+  </a>
+</p>
 
-SimpleDSPy is a lightweight Python library that simplifies building and running DSPy pipelines with an intuitive interface.
+<p align="center">
+  SimpleDSPy is a lightweight Python library that simplifies building and running DSPy pipelines with an intuitive interface.
+</p>
 
 ## Features
 
