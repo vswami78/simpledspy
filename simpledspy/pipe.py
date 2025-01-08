@@ -41,22 +41,34 @@ class PipeFunction:
             description=description
         )
 
-    def _get_assignment_target(self) -> str:
-        """Get the name of the variable being assigned to."""
+    def _get_caller_context(self) -> Tuple[List[str], str]:
+        """Get the input variable names and assignment target from the calling context."""
         frame = inspect.currentframe()
         try:
             # Go up two frames to get the assignment context
             outer_frame = frame.f_back.f_back
             # Get the bytecode for the current frame
             bytecode = dis.Bytecode(outer_frame.f_code)
+            
+            # Find the input variable names
+            input_names = []
+            for instr in bytecode:
+                if instr.offset < outer_frame.f_lasti and instr.opname == 'LOAD_NAME':
+                    input_names.append(instr.argval)
+            
             # Find the STORE_NAME opcode that follows our call
+            target_name = None
             for instr in bytecode:
                 if instr.offset > outer_frame.f_lasti and instr.opname == 'STORE_NAME':
-                    return instr.argval
+                    target_name = instr.argval
+                    break
+            
+            if not target_name:
+                raise ValueError("pipe must be called in an assignment context.")
+            
+            return input_names, target_name
         finally:
             del frame
-
-        raise ValueError("pipe must be called in an assignment context.")
 
     def __call__(self, *args, description: str = None) -> Any:
         """
@@ -69,12 +81,11 @@ class PipeFunction:
         Returns:
             The output value
         """
-        # Get the assignment target name
-        output_name = self._get_assignment_target()
-        # print("output_name:", output_name)
+        # Get the input names and assignment target from the calling context
+        input_names, output_name = self._get_caller_context()
         
-        # Infer input names from args
-        inputs = [f"input_{i+1}" for i in range(len(args))]
+        # Use the actual variable names as input field names
+        inputs = input_names
             
         # Create module dynamically with correct output name
         module = self._create_module(inputs, [output_name], description)
