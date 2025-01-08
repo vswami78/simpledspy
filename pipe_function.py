@@ -71,8 +71,9 @@ class PipeFunction:
         # Register step
         self.pipeline_manager.register_step(inputs=inputs, outputs=[output_name], module=module)
         
-        # Return outputs
-        return tuple(getattr(result, output_name))
+        # Return outputs - get the actual prediction value
+        output_value = getattr(result, output_name)
+        return (output_value,)  # Return as tuple
 
 # Instantiate the pipe function
 pipe = PipeFunction()

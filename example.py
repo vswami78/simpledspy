@@ -18,7 +18,7 @@ concatenated = pipe(
 # Print results
 print(f"Input 1: {input1}")
 print(f"Input 2: {input2}")
-print(f"concatenated: {concatenated[0]}")
+print(f"Combined: {concatenated[0]}")
 
 # Example input text
 input_text = "This is a simple example text with seven words"
