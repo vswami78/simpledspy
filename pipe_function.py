@@ -1,4 +1,4 @@
-from typing import Any, Tuple, List
+from typing import Any, Tuple, List, Callable
 import dspy
 from pipeline_manager import PipelineManager
 from module_factory import ModuleFactory
