@@ -1,5 +1,6 @@
 import pytest
-from example import pipe, ModuleFactory
+from pipe_function import pipe
+
 
 def test_word_count():
     # Setup
