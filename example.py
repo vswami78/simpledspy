@@ -4,11 +4,15 @@ from pipe_function import pipe
 input1 = "Hello"
 input2 = "World"
 
+def combine_strings(text1: str, text2: str) -> str:
+    """Concatenates two strings with a space between them"""
+    return f"{text1} {text2}"
+
 # Process the inputs with concatenation
 combined = pipe(
     input1, input2,
     inputs=["text1", "text2"],
-    outputs=["combined_text"],
+    outputs=[pipe._infer_output_name(combine_strings)],
     description="Concatenates two strings with a space between them"
 )
 

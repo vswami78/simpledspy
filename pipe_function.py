@@ -19,6 +19,28 @@ class PipeFunction:
             description=description
         )
 
+    def _infer_output_name(self, func: Callable) -> str:
+        """Infer output variable name from function's return annotation."""
+        import inspect
+        sig = inspect.signature(func)
+        
+        # Get return annotation
+        return_annotation = sig.return_annotation
+        
+        # If annotation is a type, use simple name
+        if isinstance(return_annotation, type):
+            return return_annotation.__name__.lower()
+            
+        # If annotation is a string, extract variable name
+        if isinstance(return_annotation, str):
+            # Handle cases like "Tuple[str, int]" or "List[str]"
+            if '[' in return_annotation:
+                return return_annotation.split('[')[0].lower()
+            return return_annotation.lower()
+            
+        # Default fallback
+        return "output"
+
     def __call__(self, *args, inputs: List[str], outputs: List[str], description: str = "") -> Tuple[Any, ...]:
         """
         Executes a DSPy module with the given signature.
