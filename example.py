@@ -1,8 +1,7 @@
 from pipe_function import pipe
-from module_factory import ModuleFactory
 
 # Create concatenation module
-module_factory = ModuleFactory()
+module_factory = pipe.pipeline_manager.module_factory
 concatenator = module_factory.create_module(
     inputs=["text1", "text2"],
     outputs=["combined_text"],
