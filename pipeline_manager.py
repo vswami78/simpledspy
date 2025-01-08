@@ -34,42 +34,35 @@ class PipelineManager:
         self.pipeline_steps.append(step)
         print(f"Registered step: {inputs} -> {outputs}")
 
-    def assemble_pipeline(self) -> dspy.ChainOfThought:
+    def assemble_pipeline(self) -> dspy.Module:
         """
-        Assembles the registered steps into a single DSPy ChainOfThought module.
+        Assembles the registered steps into a DSPy pipeline module.
         
         Returns:
-            dspy.ChainOfThought: The assembled DSPy pipeline.
+            dspy.Module: The assembled DSPy pipeline.
         """
         if not self.pipeline_steps:
             raise ValueError("No pipeline steps registered. Please make pipe calls before assembling the pipeline.")
         
-        # Collect all unique input and output field names
-        all_inputs = set()
-        all_outputs = set()
-        for step in self.pipeline_steps:
-            all_inputs.update(step['inputs'])
-            all_outputs.update(step['outputs'])
+        # Create a simple DSPy module that chains the steps
+        class Pipeline(dspy.Module):
+            def __init__(self, steps):
+                super().__init__()
+                self.steps = steps
+                for i, step in enumerate(steps):
+                    setattr(self, f'step{i}', step['module'])
+            
+            def forward(self, **inputs):
+                results = {}
+                for step in self.steps:
+                    # Get inputs for this step
+                    step_inputs = {k: inputs[k] for k in step['inputs']}
+                    # Run the module
+                    module = getattr(self, f'step{self.steps.index(step)}')
+                    step_output = module(**step_inputs)
+                    # Store outputs
+                    for output in step['outputs']:
+                        results[output] = getattr(step_output, output)
+                return results
         
-        signature_fields = {}
-        for inp in all_inputs:
-            signature_fields[inp] = dspy.InputField(desc=f"Input field {inp}.")
-        for outp in all_outputs:
-            signature_fields[outp] = dspy.OutputField(desc=f"Output field {outp}.")
-
-        # Dynamically create the Signature class
-        DynamicSignature = type(
-            'DynamicSignature',
-            (dspy.Signature,),
-            signature_fields
-        )
-
-        # Initialize the ChainOfThought with the dynamic signature
-        program = dspy.ChainOfThought(DynamicSignature)
-
-        # Add all registered modules to the ChainOfThought
-        for step in self.pipeline_steps:
-            program.add_module(step['module'])
-        
-        print("Assembled the DSPy pipeline with all registered steps.")
-        return program
+        return Pipeline(self.pipeline_steps)
