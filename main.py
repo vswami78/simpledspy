@@ -30,16 +30,5 @@ if __name__ == "__main__":
     # Example usage
     pipeline_manager = PipelineManager()
     
-    # Initialize optimizer
-    optimizer = MIPROv2(
-        metric=exact_match_metric,
-        auto="light",
-        num_threads=24
-    )
-    
     # Example pipeline execution
-    try:
-        assembled_pipeline = pipeline_manager.assemble_pipeline()
-        print("Pipeline assembled successfully")
-    except ValueError as e:
-        print(f"Pipeline assembly error: {e}")
+    assembled_pipeline = pipeline_manager.assemble_pipeline()

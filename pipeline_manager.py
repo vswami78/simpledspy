@@ -10,29 +10,17 @@ class PipelineManager:
 
     def __new__(cls):
         if cls._instance is None:
-            cls._instance = super(PipelineManager, cls).__new__(cls)
+            cls._instance = super().__new__(cls)
             cls._instance.pipeline_steps = []
-            cls._instance.cache_dir = "./dspy_pipeline_cache/"
-            if not os.path.exists(cls._instance.cache_dir):
-                os.makedirs(cls._instance.cache_dir)
         return cls._instance
 
     def register_step(self, inputs: List[str], outputs: List[str], module: Any):
-        """
-        Registers a DSPy module with specified inputs and outputs.
-        
-        Args:
-            inputs (List[str]): List of input field names.
-            outputs (List[str]): List of output field names.
-            module (Any): DSPy module or function to process the inputs.
-        """
-        step = {
+        """Register a pipeline step with inputs, outputs and module"""
+        self.pipeline_steps.append({
             "inputs": inputs,
             "outputs": outputs,
             "module": module
-        }
-        self.pipeline_steps.append(step)
-        print(f"Registered step: {inputs} -> {outputs}")
+        })
 
     def assemble_pipeline(self) -> dspy.Module:
         """

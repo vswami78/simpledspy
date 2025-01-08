@@ -18,48 +18,31 @@ class PipeFunction:
         self.optimized = True
         self.optimized_pipeline = optimized_pipeline
 
-    def __call__(self, *args, outputs: List[str] = None, modules: List[Any] = None) -> Tuple[Any, ...]:
+    def __call__(self, *args, outputs: List[str], modules: List[Any]) -> Tuple[Any, ...]:
         """
-        Acts as the pipe interface. Executes modules immediately and registers the steps.
-        If the pipeline is optimized, routes the call to the optimized pipeline.
+        Executes modules immediately and registers the steps.
         
         Args:
-            *args: Input arguments corresponding to the DSPy inputs.
-            outputs (List[str], optional): List of output field names.
-            modules (List[Any], optional): List of DSPy modules or functions to process the inputs.
-        
+            *args: Input arguments
+            outputs: List of output field names
+            modules: List of DSPy modules to process the inputs
+            
         Returns:
-            Tuple[Any, ...]: A tuple containing the outputs in the order specified.
+            Tuple containing the outputs
         """
-        if self.optimized:
-            # Execute via the optimized pipeline
-            input_field_names = [f"input{i+1}" for i in range(len(args))]
-            input_dict = {f"{name}": arg for name, arg in zip(input_field_names, args)}
-            return tuple(getattr(self.optimized_pipeline(**input_dict), outp, None) for outp in input_field_names)
-        
-        # Before optimization: Execute modules immediately and register steps
-        if outputs is None:
-            raise ValueError("You must specify the 'outputs' parameter as a list of output field names.")
-        if modules is None:
-            raise ValueError("You must provide DSPy modules via the 'modules' parameter.")
+        if not outputs or not modules:
+            raise ValueError("Both outputs and modules parameters are required")
         if len(outputs) != len(modules):
-            raise ValueError("The number of outputs must match the number of modules provided.")
-        if len(args) < 1:
-            raise ValueError("At least one input argument is required.")
+            raise ValueError("Number of outputs must match number of modules")
+            
+        # Execute modules and collect results
+        results = [module(*args) for module in modules]
         
-        # Define input field names based on the number of inputs
-        input_field_names = [f"input{i+1}" for i in range(len(args))]
-        
-        # Execute each module and collect the results
-        results = []
-        for module in modules:
-            result = module(*args)
-            results.append(result)
-        
-        # Register each step with the PipelineManager
-        for output, module in zip(outputs, modules):
-            self.pipeline_manager.register_step(inputs=input_field_names, outputs=[output], module=module)
-        
+        # Register steps using actual input names from module signatures
+        for module, output in zip(modules, outputs):
+            inputs = list(module.signature.input_fields.keys())
+            self.pipeline_manager.register_step(inputs=inputs, outputs=[output], module=module)
+            
         return tuple(results)
 
 # Instantiate the pipe function
