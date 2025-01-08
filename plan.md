@@ -1,41 +1,82 @@
-# DSPy Pipeline Implementation Plan
+# DSPy Pipeline Code Overview
 
-## Phase 1: Core Functionality
-1. Implement ModuleFactory for dynamic module creation
-2. Enhance PipeFunction to handle dynamic inputs/outputs
-3. Update PipelineManager to support chained execution
-4. Add basic error handling and validation
+## Core Components
 
-## Phase 2: Optimization Support
-1. Add optimization hooks in PipeFunction
-2. Implement metric collection
-3. Add pipeline caching
-4. Support different optimization strategies
+### 1. ModuleFactory
+- Creates DSPy modules dynamically
+- Handles signature generation
+- Supports custom input/output configurations
 
-## Phase 3: Developer Experience
-1. Add comprehensive error messages
-2. Create example modules
-3. Add documentation for module creation
-4. Add type hints and validation
+### 2. PipeFunction
+- Main interface for pipeline execution
+- Handles both immediate and optimized execution
+- Manages pipeline step registration
+- Provides optimization hooks
 
-## Phase 4: Testing & Validation
-1. Add unit tests for core components
-2. Add integration tests for pipeline execution
-3. Add performance benchmarks
-4. Add example test cases
+### 3. PipelineManager
+- Singleton class for pipeline management
+- Handles step registration and assembly
+- Manages pipeline caching
+- Provides pipeline assembly functionality
 
-## Implementation Order
-1. Update ModuleFactory to handle dynamic signatures
-2. Enhance PipeFunction to use ModuleFactory
-3. Update PipelineManager to support optimization
-4. Add metrics collection
-5. Add error handling
-6. Add documentation
-7. Add test cases
+### 4. Metrics
+- Provides evaluation metrics
+- Supports custom metric implementations
+- Handles exact match calculations
 
-## Key Principles
-1. Keep core components generic
-2. Maintain clean separation of concerns
-3. Support both immediate and optimized execution
-4. Enable easy module creation
-5. Provide clear error messages
+## Key Features
+
+### Pipeline Execution
+- Immediate execution of modules
+- Optimized pipeline execution
+- Input/output validation
+- Error handling
+
+### Module Management
+- Dynamic module creation
+- Signature generation
+- Input/output field configuration
+- Module chaining
+
+### Optimization
+- Pipeline caching
+- Metric collection
+- Optimization strategies
+- Pipeline assembly
+
+## Example Usage
+
+```python
+# Create pipeline
+inputs = ["text", "cv"]
+outputs = ["name", "degree_bool", "age"]
+modules = [
+    module_factory.create_module(inputs, ["name"]),
+    module_factory.create_module(inputs, ["degree_bool"]), 
+    module_factory.create_module(inputs, ["age"])
+]
+
+# Run pipeline
+results = pipe(application_mail_text, application_cv, 
+              outputs=outputs, modules=modules)
+
+# Optimize pipeline
+optimizer = MIPROv2(metric=exact_match_metric)
+optimized_pipeline = optimizer.compile(
+    pipeline_manager.assemble_pipeline(),
+    trainset=training_data
+)
+```
+
+## File Structure
+
+```
+dspy_pipeline/
+├── main.py            # Main entry point
+├── module_factory.py  # Module creation
+├── pipe_function.py   # Pipeline execution
+├── pipeline_manager.py # Pipeline management
+├── metrics.py         # Evaluation metrics
+├── README.md          # Documentation
+└── plan.md            # Project overview
+```
