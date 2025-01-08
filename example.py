@@ -4,8 +4,27 @@ from module_factory import ModuleFactory
 # Configure language model with deepseek/deepseek-chat
 pipe.configure_lm()
 
-# Create word counter module
+# Create concatenation module
 module_factory = ModuleFactory()
+concatenator = module_factory.create_module(
+    inputs=["text1", "text2"],
+    outputs=["combined_text"],
+    description="Concatenates two text inputs"
+)
+
+# Example inputs
+input1 = "Hello"
+input2 = "World"
+
+# Process the inputs
+combined = pipe(input1, input2, modules=[concatenator])
+
+# Print results
+print(f"Input 1: {input1}")
+print(f"Input 2: {input2}")
+print(f"Combined: {combined[0]}")
+
+# Create word counter module
 word_counter = module_factory.create_module(
     inputs=["text"],
     outputs=["num_words"],
