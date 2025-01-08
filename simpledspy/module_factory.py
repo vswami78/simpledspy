@@ -9,7 +9,7 @@ class ModuleFactory:
                 self.input_fields = inputs
                 self.output_fields = outputs
 
-            def forward(self, **kwargs):
-                return {output: kwargs[input] for input, output in zip(self.input_fields, self.output_fields)}
+            def forward(self, *args):
+                return {output: arg for arg, output in zip(args, self.output_fields)}
 
         return DynamicModule()
