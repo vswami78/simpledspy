@@ -1,60 +1,54 @@
 from typing import Any, Tuple, List
 import dspy
 from pipeline_manager import PipelineManager
+from module_factory import ModuleFactory
 
 class PipeFunction:
     def __init__(self):
         self.pipeline_manager = PipelineManager()
-        # Configure default LM implicitly
-        dspy.configure(lm=dspy.LM(model="deepseek/deepseek-chat"))
+        self.module_factory = ModuleFactory()
+        # Configure default LM
+        self.lm = dspy.LM(model="deepseek/deepseek-chat")
+        dspy.configure(lm=self.lm)
 
-    def __call__(self, *args, modules: List[Any]) -> Tuple[Any, ...]:
+    def _create_module(self, inputs: List[str], outputs: List[str], description: str = "") -> dspy.Module:
+        """Create a DSPy module with the given signature."""
+        return self.module_factory.create_module(
+            inputs=inputs,
+            outputs=outputs,
+            description=description
+        )
+
+    def __call__(self, *args, inputs: List[str], outputs: List[str], description: str = "") -> Tuple[Any, ...]:
         """
-        Executes modules immediately and registers the steps.
+        Executes a DSPy module with the given signature.
         
         Args:
             *args: Input arguments
-            modules: List of DSPy modules to process the inputs
+            inputs: List of input field names
+            outputs: List of output field names
+            description: Description of the module's purpose
             
         Returns:
             Tuple containing the outputs
         """
-        if not modules:
-            raise ValueError("Modules parameter is required")
+        if len(inputs) != len(args):
+            raise ValueError(f"Expected {len(inputs)} inputs but got {len(args)}")
             
-        # Configure default LM if not already configured
-        if self.lm is None:
-            self.configure_lm()
-            
-        # Get outputs from module signatures
-        outputs = []
-        for module in modules:
-            outputs.extend(list(module.signature.output_fields.keys()))
-            
-        # Create input dict from args and module inputs
-        results = []
-        for module in modules:
-            # Get the input field names for this module
-            input_fields = list(module.signature.input_fields.keys())
-            
-            # Create input dict matching the module's signature
-            if len(input_fields) != len(args):
-                raise ValueError(f"Module expects {len(input_fields)} inputs but got {len(args)}")
-                
-            input_dict = {field: arg for field, arg in zip(input_fields, args)}
-            
-            # Execute module with proper keyword arguments
-            result = module(**input_dict)
-            results.append(result)
+        # Create module dynamically
+        module = self._create_module(inputs, outputs, description)
         
-        # Register steps using actual input/output names from module signatures
-        for module in modules:
-            inputs = list(module.signature.input_fields.keys())
-            module_outputs = list(module.signature.output_fields.keys())
-            self.pipeline_manager.register_step(inputs=inputs, outputs=module_outputs, module=module)
-            
-        # Extract and return the output values
-        return tuple(getattr(result, output) for result, output in zip(results, outputs))
+        # Create input dict
+        input_dict = {field: arg for field, arg in zip(inputs, args)}
+        
+        # Execute module
+        result = module(**input_dict)
+        
+        # Register step
+        self.pipeline_manager.register_step(inputs=inputs, outputs=outputs, module=module)
+        
+        # Return outputs
+        return tuple(getattr(result, output) for output in outputs)
 
 # Instantiate the pipe function
 pipe = PipeFunction()
