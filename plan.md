@@ -1,28 +1,41 @@
 # DSPy Pipeline Code Overview
 
-## Core Components
+## Classes and Methods
 
 ### 1. ModuleFactory
-- Creates DSPy modules dynamically
-- Handles signature generation
-- Supports custom input/output configurations
+- `create_module(inputs: List[str], outputs: List[str], description: str = "") -> dspy.Module`
+  - Creates DSPy modules with specified inputs/outputs
+  - Generates appropriate signatures
+  - Returns Predict modules
 
 ### 2. PipeFunction
-- Main interface for pipeline execution
-- Handles both immediate and optimized execution
-- Manages pipeline step registration
-- Provides optimization hooks
+- `__init__()`
+  - Initializes pipeline manager and module factory
+- `optimize(optimized_pipeline: Any)`
+  - Sets pipeline as optimized
+  - Stores optimized pipeline
+- `__call__(*args, outputs: List[str] = None, modules: List[Any] = None) -> Tuple[Any, ...]`
+  - Main pipe interface
+  - Handles immediate execution
+  - Registers pipeline steps
 
 ### 3. PipelineManager
-- Singleton class for pipeline management
-- Handles step registration and assembly
-- Manages pipeline caching
-- Provides pipeline assembly functionality
+- `__new__()`
+  - Singleton pattern implementation
+  - Initializes pipeline steps and cache
+- `register_step(inputs: List[str], outputs: List[str], module: Any)`
+  - Registers pipeline steps
+  - Stores input/output mappings
+- `assemble_pipeline() -> dspy.Module`
+  - Creates executable pipeline
+  - Chains registered steps
+  - Returns Pipeline module
 
 ### 4. Metrics
-- Provides evaluation metrics
-- Supports custom metric implementations
-- Handles exact match calculations
+- `exact_match_metric(gold: List[Any], pred: List[Any], trace=None) -> float`
+  - Calculates exact match accuracy
+  - Compares predicted vs ground truth values
+  - Returns accuracy score
 
 ## Key Features
 
