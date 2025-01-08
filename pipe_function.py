@@ -55,11 +55,15 @@ class PipeFunction:
         inputs = [f"input_{i+1}" for i in range(len(args))]
         
         # Generate default description if none provided
-        # if description is None:
-            # input_types = [type(arg).__name__ for arg in args]
-            # description = f"Processes {len(args)} inputs of types: {', '.join(input_types)}"
+        if description is None:
+            input_types = [type(arg).__name__ for arg in args]
+            description = f"Processes {len(args)} inputs of types: {', '.join(input_types)}"
             
-        output_name = self._infer_output_name(func)
+        # Use function to infer output name if provided, else use first word of description
+        if func is not None:
+            output_name = self._infer_output_name(func)
+        else:
+            output_name = description.lower().split()[0]
             
         # Create module dynamically
         module = self._create_module(inputs, [output_name], description)
