@@ -1,5 +1,11 @@
 # SimpleDSPy
 
+[![PyPI version](https://badge.fury.io/py/simpledspy.svg)](https://badge.fury.io/py/simpledspy)
+[![Python Version](https://img.shields.io/pypi/pyversions/simpledspy)](https://pypi.org/project/simpledspy/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Tests](https://github.com/tomdoerr/simpledspy/actions/workflows/tests.yml/badge.svg)](https://github.com/tomdoerr/simpledspy/actions/workflows/tests.yml)
+
 SimpleDSPy is a lightweight Python library that simplifies building and running DSPy pipelines with an intuitive interface.
 
 ## Features
