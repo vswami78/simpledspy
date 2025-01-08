@@ -69,10 +69,10 @@ class PipeFunction:
         result = module(**input_dict)
         
         # Register step
-        self.pipeline_manager.register_step(inputs=inputs, outputs=outputs, module=module)
+        self.pipeline_manager.register_step(inputs=inputs, outputs=[output_name], module=module)
         
         # Return outputs
-        return tuple(getattr(result, output) for output in outputs)
+        return tuple(getattr(result, output_name))
 
 # Instantiate the pipe function
 pipe = PipeFunction()
