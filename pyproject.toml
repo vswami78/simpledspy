@@ -12,3 +12,18 @@ python = "^3.8"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+[tool.poetry]
+name = "simpledspy"
+version = "0.1.0"
+description = "A simplified DSPy interface"
+authors = ["Tom Dörr <tomdoerr96@gmail.com>"]
+readme = "README.md"
+packages = [{include = "simpledspy"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+dspy = "^1.0.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
