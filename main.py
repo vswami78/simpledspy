@@ -1,13 +1,14 @@
 from simpledspy import pipe
-from simpledspy import PipelineManager
 
 if __name__ == "__main__":
     # Test basic functionality
     result = pipe("abc def ghi jkl")
-    print(result)  # Should print: {'result': 'abc def ghi jkl'}
+    print("Result:", result)  # Should print: ghi
     
-    # Assemble and run pipeline
-    pipeline_manager = PipelineManager()
-    assembled_pipeline = pipeline_manager.assemble_pipeline()
-    pipeline_result = assembled_pipeline("input data")
-    print(pipeline_result)
+    # Test concatenation
+    combined = pipe("Hello", "World")
+    print("Combined:", combined)  # Should print: Hello World
+    
+    # Test word count
+    word_count = pipe("This text has exactly five words")
+    print("Word count:", word_count)  # Should print: 5
