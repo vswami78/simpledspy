@@ -1,16 +1,36 @@
-from typing import Any, Tuple, List, Callable
+from typing import Any, Tuple, List, Callable, Dict
 import dspy
 from pipeline_manager import PipelineManager
 from module_factory import ModuleFactory
 import inspect
+import os
 
 class PipeFunction:
+    _instances: Dict[str, 'PipeFunction'] = {}
+
+    def __new__(cls, *args, **kwargs):
+        # Get the caller's file and line number
+        frame = inspect.currentframe().f_back
+        location = f"{os.path.basename(frame.f_code.co_filename)}:{frame.f_lineno}"
+        
+        # Create or return existing instance for this location
+        if location not in cls._instances:
+            instance = super(PipeFunction, cls).__new__(cls)
+            cls._instances[location] = instance
+            instance._initialized = False
+            instance._location = location
+        return cls._instances[location]
+
     def __init__(self):
+        if getattr(self, '_initialized', False):
+            return
+        self._initialized = True
         self.pipeline_manager = PipelineManager()
         self.module_factory = ModuleFactory()
         # Configure default LM with caching disabled
         self.lm = dspy.LM(model="deepseek/deepseek-chat")
         dspy.configure(lm=self.lm, cache=False)
+        print(f"Initialized new PipeFunction at {self._location}")
 
     def _create_module(self, inputs: List[str], outputs: List[str], description: str = "") -> dspy.Module:
         """Create a DSPy module with the given signature."""
@@ -52,7 +72,6 @@ class PipeFunction:
         
         # Infer input names from args
         inputs = [f"input_{i+1}" for i in range(len(args))]
-        
             
         # Create module dynamically
         module = self._create_module(inputs, [output_name], description)
