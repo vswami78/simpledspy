@@ -7,7 +7,7 @@ class PipeFunction:
         self.pipeline_manager = PipelineManager()
         self.lm = None
 
-    def configure_lm(self, model_name: str = "deepseek-chat"):
+    def configure_lm(self, model_name: str = "deepseek/deepseek-chat"):
         """Configure the language model to use"""
         self.lm = dspy.LM(model=model_name)
         dspy.configure(lm=self.lm)
