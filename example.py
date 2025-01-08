@@ -1,9 +1,6 @@
 from pipe_function import pipe
 from module_factory import ModuleFactory
 
-# Configure language model with deepseek/deepseek-chat
-pipe.configure_lm()
-
 # Create concatenation module
 module_factory = ModuleFactory()
 concatenator = module_factory.create_module(

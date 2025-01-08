@@ -5,12 +5,8 @@ from pipeline_manager import PipelineManager
 class PipeFunction:
     def __init__(self):
         self.pipeline_manager = PipelineManager()
-        self.lm = None
-
-    def configure_lm(self, model_name: str = "deepseek/deepseek-chat"):
-        """Configure the language model to use"""
-        self.lm = dspy.LM(model=model_name)
-        dspy.configure(lm=self.lm)
+        # Configure default LM implicitly
+        dspy.configure(lm=dspy.LM(model="deepseek/deepseek-chat"))
 
     def __call__(self, *args, modules: List[Any]) -> Tuple[Any, ...]:
         """
