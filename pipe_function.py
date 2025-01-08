@@ -1,9 +1,11 @@
-from typing import Any, Tuple, List
+from typing import Any, Tuple, List, Dict
 from pipeline_manager import PipelineManager
+from module_factory import ModuleFactory
 
 class PipeFunction:
     def __init__(self):
         self.pipeline_manager = PipelineManager()
+        self.module_factory = ModuleFactory()
         self.optimized = False
 
     def optimize(self, optimized_pipeline: Any):
