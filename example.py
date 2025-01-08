@@ -1,8 +1,8 @@
 from pipe_function import pipe
 from module_factory import ModuleFactory
 
-# Configure language model (will be done automatically on first call if not configured)
-pipe.configure_lm()
+# Configure language model with deepseek-chat
+pipe.configure_lm("deepseek-chat")
 
 # Create word counter module
 module_factory = ModuleFactory()
