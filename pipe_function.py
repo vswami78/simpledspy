@@ -38,8 +38,6 @@ class PipeFunction:
                 return return_annotation.split('[')[0].lower()
             return return_annotation.lower()
             
-        # Default fallback
-        return "output"
 
     def __call__(self, func: Callable = None, *args, description: str = None) -> Tuple[Any, ...]:
         """
@@ -57,15 +55,11 @@ class PipeFunction:
         inputs = [f"input_{i+1}" for i in range(len(args))]
         
         # Generate default description if none provided
-        if description is None:
-            input_types = [type(arg).__name__ for arg in args]
-            description = f"Processes {len(args)} inputs of types: {', '.join(input_types)}"
+        # if description is None:
+            # input_types = [type(arg).__name__ for arg in args]
+            # description = f"Processes {len(args)} inputs of types: {', '.join(input_types)}"
             
-        # Infer output name from function or description
-        if func is not None:
-            output_name = self._infer_output_name(func)
-        else:
-            output_name = description.lower().split()[0]
+        output_name = self._infer_output_name(func)
             
         # Create module dynamically
         module = self._create_module(inputs, [output_name], description)
