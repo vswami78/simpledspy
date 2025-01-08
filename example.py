@@ -12,7 +12,6 @@ def combine_strings(text1: str, text2: str) -> str:
 combined = pipe(
     input1, input2,
     inputs=["text1", "text2"],
-    outputs=[pipe._infer_output_name(combine_strings)],
     description="Concatenates two strings with a space between them"
 )
 
@@ -28,7 +27,6 @@ input_text = "This is a simple example text with seven words"
 num_words = pipe(
     input_text,
     inputs=["text"],
-    outputs=["word_count"],
     description="Counts the number of words in a text"
 )
 
