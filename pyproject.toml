@@ -8,7 +8,7 @@ packages = [{include = "simpledspy"}]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-dspy = "^1.0.0"
+dspy = "*"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
