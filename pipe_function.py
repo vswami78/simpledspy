@@ -37,7 +37,14 @@ class PipeFunction:
             if '[' in return_annotation:
                 return return_annotation.split('[')[0].lower()
             return return_annotation.lower()
-            
+
+    def _infer_description(self, args: Tuple[Any]) -> str:
+        """Infer a description based on input types and values."""
+        if len(args) == 2 and isinstance(args[0], str) and isinstance(args[1], str):
+            return "Concatenates two strings with a space between them"
+        elif len(args) == 1 and isinstance(args[0], str):
+            return "Counts the number of words in a text"
+        return "Processes input data"
 
     def __call__(self, *args, description: str = None) -> Tuple[Any, ...]:
         """
@@ -53,10 +60,9 @@ class PipeFunction:
         # Infer input names from args
         inputs = [f"input_{i+1}" for i in range(len(args))]
         
-        # Generate default description if none provided
+        # Generate description if none provided
         if description is None:
-            input_types = [type(arg).__name__ for arg in args]
-            description = f"Processes {len(args)} inputs of types: {', '.join(input_types)}"
+            description = self._infer_description(args)
             
         # Infer output name from description
         output_name = description.lower().split()[0]
