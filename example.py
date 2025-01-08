@@ -11,7 +11,6 @@ def combine_strings(text1: str, text2: str) -> str:
 # Process the inputs with concatenation
 concatenated = pipe(
     input1, input2,
-    inputs=["text1", "text2"],
     description="Concatenates two strings with a space between them"
 )
 
@@ -26,7 +25,6 @@ input_text = "This is a simple example text with seven words"
 # Process the text with word count
 num_words = pipe(
     input_text,
-    inputs=["text"],
     description="Counts the number of words in a text"
 )
 
