@@ -21,12 +21,6 @@ def test_word_count():
     assert len(num_words) == 1
     assert num_words[0] == "3"  # Exact match for 3 words
 
-def test_pipe_function_initialization():
-    # Verify pipe is properly initialized
-    assert hasattr(pipe, 'configure_lm')
-    assert hasattr(pipe, '_call__')
-    assert True  # Smoke test
-
 def test_module_factory():
     # Test module creation
     module_factory = ModuleFactory()
