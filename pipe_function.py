@@ -2,6 +2,7 @@ from typing import Any, Tuple, List, Callable
 import dspy
 from pipeline_manager import PipelineManager
 from module_factory import ModuleFactory
+import inspect
 
 class PipeFunction:
     def __init__(self):
@@ -19,27 +20,23 @@ class PipeFunction:
             description=description
         )
 
-    def _infer_output_name(self, func: Callable) -> str:
-        """Infer output variable name from function's return annotation."""
-        import inspect
-        sig = inspect.signature(func)
-        
-        # Get return annotation
-        return_annotation = sig.return_annotation
-        
-        # If annotation is a type, use simple name
-        if isinstance(return_annotation, type):
-            return return_annotation.__name__.lower()
-            
-        # If annotation is a string, extract variable name
-        if isinstance(return_annotation, str):
-            # Handle cases like "Tuple[str, int]" or "List[str]"
-            if '[' in return_annotation:
-                return return_annotation.split('[')[0].lower()
-            return return_annotation.lower()
-            
+    def _get_assignment_target(self) -> str:
+        """Get the name of the variable being assigned to."""
+        frame = inspect.currentframe()
+        try:
+            # Go up two frames to get the assignment context
+            outer_frame = frame.f_back.f_back
+            code_context = outer_frame.f_code.co_code
+            names = outer_frame.f_code.co_names
+            # Look for STORE_NAME opcode (90)
+            for i in range(len(code_context)):
+                if code_context[i] == 90:  # STORE_NAME opcode
+                    return names[code_context[i+1]]
+        finally:
+            del frame
+        return "output"
 
-    def __call__(self, *args, description: str = None) -> Tuple[Any, ...]:
+    def __call__(self, *args, description: str = None) -> Any:
         """
         Executes a DSPy module with the given signature.
         
@@ -48,18 +45,18 @@ class PipeFunction:
             description: Optional description of the module's purpose
             
         Returns:
-            Tuple containing the outputs
+            The output value
         """
+        # Get the assignment target name
+        output_name = self._get_assignment_target()
+        
         # Infer input names from args
         inputs = [f"input_{i+1}" for i in range(len(args))]
         
         # Generate default description if none provided
-        # if description is None:
-            # input_types = [type(arg).__name__ for arg in args]
-            # description = f"Processes {len(args)} inputs of types: {', '.join(input_types)}"
-            
-        # Use first word of description as output name
-        output_name = description.lower().split()[0]
+        if description is None:
+            input_types = [type(arg).__name__ for arg in args]
+            description = f"Processes {len(args)} inputs of types: {', '.join(input_types)}"
             
         # Create module dynamically
         module = self._create_module(inputs, [output_name], description)
@@ -73,9 +70,8 @@ class PipeFunction:
         # Register step
         self.pipeline_manager.register_step(inputs=inputs, outputs=[output_name], module=module)
         
-        # Return outputs - get the actual prediction value
-        output_value = getattr(result, output_name)
-        return (output_value,)  # Return as tuple
+        # Return the output value
+        return getattr(result, output_name)
 
 # Instantiate the pipe function
 pipe = PipeFunction()
