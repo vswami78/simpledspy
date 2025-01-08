@@ -5,30 +5,33 @@ class PipeFunction:
     def __init__(self):
         self.pipeline_manager = PipelineManager()
 
-    def __call__(self, *args, outputs: List[str], modules: List[Any]) -> Tuple[Any, ...]:
+    def __call__(self, *args, modules: List[Any]) -> Tuple[Any, ...]:
         """
         Executes modules immediately and registers the steps.
         
         Args:
             *args: Input arguments
-            outputs: List of output field names
             modules: List of DSPy modules to process the inputs
             
         Returns:
             Tuple containing the outputs
         """
-        if not outputs or not modules:
-            raise ValueError("Both outputs and modules parameters are required")
-        if len(outputs) != len(modules):
-            raise ValueError("Number of outputs must match number of modules")
+        if not modules:
+            raise ValueError("Modules parameter is required")
+            
+        # Get outputs from module signatures
+        outputs = []
+        for module in modules:
+            outputs.extend(list(module.signature.output_fields.keys()))
             
         # Execute modules and collect results
         results = [module(*args) for module in modules]
         
-        # Register steps using actual input names from module signatures
-        for module, output in zip(modules, outputs):
+        # Register steps using actual input/output names from module signatures
+        for module in modules:
             inputs = list(module.signature.input_fields.keys())
-            self.pipeline_manager.register_step(inputs=inputs, outputs=[output], module=module)
+            module_outputs = list(module.signature.output_fields.keys())
+            self.pipeline_manager.register_step(inputs=inputs, outputs=module_outputs, module=module)
             
         return tuple(results)
 
