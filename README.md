@@ -66,51 +66,6 @@ The `pipe` function automatically:
 3. Tracks pipeline steps
 4. Returns processed outputs
 
-## Advanced Usage
-
-### Pipeline Management
-
-```python
-from simpledspy import PipelineManager
-
-# Get pipeline steps
-manager = PipelineManager()
-pipeline = manager.assemble_pipeline()
-
-# Run entire pipeline
-result = pipeline("input1", "input2")
-```
-
-### Custom Modules
-
-```python
-from simpledspy import ModuleFactory
-
-# Create custom module
-factory = ModuleFactory()
-module = factory.create_module(
-    inputs=["text"],
-    outputs=["cleaned_text"],
-    description="Clean and normalize text"
-)
-
-# Use module
-cleaned = module(" Some text ")
-print(cleaned.cleaned_text)  # "Some text"
-```
-
-## Configuration
-
-Configure the language model and caching:
-
-```python
-import dspy
-from simpledspy import pipe
-
-# Custom LM configuration
-pipe.lm = dspy.LM(model="gpt-4")
-dspy.configure(lm=pipe.lm, cache=True)
-```
 
 ## Contributing
 
