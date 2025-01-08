@@ -27,3 +27,18 @@ num_words = pipe(
 # Print results
 print(f"Input text: {input_text}")
 print(f"Number of words: {num_words}")
+
+# New examples without descriptions
+text1 = "First example text"
+text2 = "Second example text"
+
+# Concatenation without description
+combined_texts = pipe(text1, text2)
+
+# Word count without description
+word_count = pipe("This text has exactly five words")
+
+# Print new results
+print("\nExamples without descriptions:")
+print(f"Combined texts: {combined_texts}")
+print(f"Word count: {word_count}")
