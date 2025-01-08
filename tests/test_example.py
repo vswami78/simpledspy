@@ -1,5 +1,13 @@
 import pytest
+import dspy
 from module_factory import ModuleFactory
+
+@pytest.fixture(autouse=True)
+def setup_dspy():
+    """Configure DSPy with a test language model before each test"""
+    # Use a simple test LM that just echoes inputs
+    lm = dspy.HFClientTGI(model="meta-llama/Llama-2-7b-chat-hf", port=8080, url="http://localhost")
+    dspy.settings.configure(lm=lm)
 
 def test_module_creation():
     """Test basic module creation with inputs and outputs"""
