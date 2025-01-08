@@ -54,7 +54,8 @@ class PipeFunction:
                     return names[code_context[i+1]]
         finally:
             del frame
-        return "output"
+
+        raise ValueError("pipe must be called in an assignment context.")
 
     def __call__(self, *args, description: str = None) -> Any:
         """
@@ -69,6 +70,7 @@ class PipeFunction:
         """
         # Get the assignment target name
         output_name = self._get_assignment_target()
+        print("output_name:", output_name)
         
         # Infer input names from args
         inputs = [f"input_{i+1}" for i in range(len(args))]
