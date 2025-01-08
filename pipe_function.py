@@ -4,6 +4,7 @@ from pipeline_manager import PipelineManager
 from module_factory import ModuleFactory
 import inspect
 import os
+import dis
 
 class PipeFunction:
     _instances: Dict[str, 'PipeFunction'] = {}
@@ -46,12 +47,12 @@ class PipeFunction:
         try:
             # Go up two frames to get the assignment context
             outer_frame = frame.f_back.f_back
-            code_context = outer_frame.f_code.co_code
-            names = outer_frame.f_code.co_names
-            # Look for STORE_NAME opcode (90)
-            for i in range(len(code_context)):
-                if code_context[i] == 90:  # STORE_NAME opcode
-                    return names[code_context[i+1]]
+            # Get the bytecode for the current frame
+            bytecode = dis.Bytecode(outer_frame.f_code)
+            # Find the STORE_NAME opcode that follows our call
+            for instr in bytecode:
+                if instr.offset > outer_frame.f_lasti and instr.opname == 'STORE_NAME':
+                    return instr.argval
         finally:
             del frame
 
