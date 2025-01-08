@@ -7,7 +7,7 @@ readme = "README.md"
 packages = [{include = "simpledspy"}]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = ">=3.9,<4.0"
 dspy = ">=2.5.0"
 
 [build-system]
