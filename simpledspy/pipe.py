@@ -96,11 +96,15 @@ class PipeFunction:
         # Create module dynamically with correct output name
         module = self._create_module(inputs, [output_name], description)
         
-        # Create input dict
-        input_dict = {field: arg for field, arg in zip(inputs, args)}
+        # Create input dict with proper field names
+        input_dict = {inp: arg for inp, arg in zip(inputs, args)}
         
-        # Execute module
-        result = module(**input_dict)
+        # Execute module with the input dict
+        try:
+            result = module(**input_dict)
+        except Exception as e:
+            print(f"Error executing module: {e}")
+            raise
         
         # Register step
         self.pipeline_manager.register_step(inputs=inputs, outputs=[output_name], module=module)

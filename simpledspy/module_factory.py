@@ -14,18 +14,28 @@ class ModuleFactory:
         Returns:
             dspy.Module: Configured DSPy module
         """
-        # Create signature fields
+        # Create signature fields with proper prefixes
         signature_fields = {}
         for inp in inputs:
-            signature_fields[inp] = dspy.InputField(desc=f"Input field {inp}")
+            signature_fields[inp] = dspy.InputField(
+                prefix=f"{inp.capitalize()}:",
+                desc=f"Input field {inp}"
+            )
         for outp in outputs:
-            signature_fields[outp] = dspy.OutputField(desc=f"Output field {outp}")
+            signature_fields[outp] = dspy.OutputField(
+                prefix=f"{outp.capitalize()}:",
+                desc=f"Output field {outp}"
+            )
 
-        # Create signature class
+        # Create signature class with proper instructions
+        instructions = description or f"Given the fields {', '.join(inputs)}, produce the fields {', '.join(outputs)}."
         Signature = type(
             'Signature',
             (dspy.Signature,),
-            {'__doc__': description, **signature_fields}
+            {
+                '__doc__': instructions,
+                **signature_fields
+            }
         )
 
         # Create and return Predict module
