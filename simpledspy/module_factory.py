@@ -23,8 +23,10 @@ class ModuleFactory:
                 prefix=f"{field_name.capitalize()}:",
                 desc=f"Input field {field_name}"
             )
-        for outp in outputs:
-            signature_fields[outp] = dspy.OutputField(
+        # Create separate output fields for each output
+        for i, outp in enumerate(outputs):
+            field_name = f"output_{i+1}" if len(outputs) > 1 else outp
+            signature_fields[field_name] = dspy.OutputField(
                 prefix=f"{outp.capitalize()}:",
                 desc=f"Output field {outp}"
             )
