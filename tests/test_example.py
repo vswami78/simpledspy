@@ -1,11 +1,11 @@
 import pytest
 from simpledspy import pipe
 
-def test_second_word_extraction():
-    """Test extracting second word from text"""
-    list_jkl = "abc def ghi jkl iowe afj wej own iow jklwe"
-    list_oqc = "oid iwfo fjs wjiof sfio we x dso weop vskl we"
+def test_multiple_outputs():
+    """Test handling multiple return values"""
+    text = "John Doe, 30 years old"
     
-    second_word_list_oqc = pipe(list_jkl, list_oqc)
-    assert second_word_list_oqc == "iwfo"
+    name, age = pipe(text)
+    assert name == "John Doe"
+    assert age == "30"
 

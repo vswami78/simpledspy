@@ -140,10 +140,10 @@ class PipeFunction:
         output_fields = module.signature.output_fields
         
         # Handle multiple outputs if present
-        if len(output_fields) == 1:
-            return getattr(result, list(output_fields.keys())[0])
+        if len(output_names) == 1:
+            return getattr(result, output_names[0])
         else:
-            return tuple(getattr(result, field) for field in output_fields.keys())
+            return tuple(getattr(result, field) for field in output_names)
 
 # Instantiate the pipe function
 pipe = PipeFunction()
