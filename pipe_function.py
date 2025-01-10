@@ -71,7 +71,7 @@ class PipeFunction:
         """
         # Get the assignment target name
         output_name = self._get_assignment_target()
-        print("output_name:", output_name)
+        # print("output_name:", output_name)
         
         # Infer input names from args
         inputs = [f"input_{i+1}" for i in range(len(args))]

@@ -29,4 +29,5 @@ class ModuleFactory:
         )
 
         # Create and return Predict module
+        print("Signature:", Signature)
         return dspy.Predict(Signature)

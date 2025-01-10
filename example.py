@@ -42,3 +42,10 @@ word_count = pipe("This text has exactly five words")
 print("\nExamples without descriptions:")
 print(f"Combined texts: {combined_texts}")
 print(f"Word count: {word_count}")
+
+
+
+third_word = pipe("abc def ghi jkl")
+print("third_word:", third_word)
+
+
