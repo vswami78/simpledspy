@@ -41,11 +41,14 @@ class PipeFunction:
             description=description
         )
 
-    def _get_caller_context(self, num_args: int) -> Tuple[List[str], str]:
+    def _get_caller_context(self, num_args: int) -> Tuple[List[str], List[str]]:
         """Get the names of variables being passed and assigned.
         
         Args:
             num_args: Number of arguments expected
+            
+        Returns:
+            Tuple of (input_names, output_names)
         """
         frame = inspect.currentframe()
         try:
@@ -83,23 +86,23 @@ class PipeFunction:
             if len(input_names) < num_args:
                 input_names.extend(f"input_{i+1}" for i in range(len(input_names), num_args))
                 
-            # Find the STORE_NAME/STORE_FAST opcode that follows our call
-            output_name = None
+            # Find all STORE_NAME/STORE_FAST opcodes that follow our call
+            output_names = []
             for instr in bytecode:
                 if instr.offset > outer_frame.f_lasti:
                     if instr.opname in ('STORE_NAME', 'STORE_FAST'):
-                        output_name = instr.argval
-                        break
+                        output_names.append(instr.argval)
             
-            if not output_name:
+            if not output_names:
                 raise ValueError("pipe must be called in an assignment context.")
             
-            # Remove duplicates and the output name from inputs
+            # Remove duplicates and output names from inputs
             input_names = list(dict.fromkeys(input_names))
-            if output_name in input_names:
-                input_names.remove(output_name)
+            for output_name in output_names:
+                if output_name in input_names:
+                    input_names.remove(output_name)
             
-            return input_names, output_name
+            return input_names, output_names
         finally:
             del frame
 
@@ -115,17 +118,13 @@ class PipeFunction:
             The output value
         """
         # Get the input and output variable names
-        input_names, output_name = self._get_caller_context(len(args))
-        print("output_name:", output_name)
+        input_names, output_names = self._get_caller_context(len(args))
+        print("output_names:", output_names)
         print("input_names:", input_names)
         
         # Use actual input names if we found them, otherwise fall back to generic names
         if len(input_names) != len(args):
             input_names = [f"input_{i+1}" for i in range(len(args))]
-            
-        # Create module dynamically with correct output names
-        # If output_name contains multiple names separated by commas, split them
-        output_names = [name.strip() for name in output_name.split(',')]
         module = self._create_module(input_names, output_names, description)
         
         # Create input dict
