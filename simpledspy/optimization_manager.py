@@ -1,15 +1,24 @@
-from typing import Dict, Any
+from typing import Dict, Any, Callable
 import dspy
 from dspy.teleprompt import BootstrapFewShot, MIPRO
+from dspy.evaluate import Evaluate
 
 class OptimizationManager:
     def __init__(self):
         self._config = {
             'strategy': 'bootstrap_few_shot',
-            'metric': None,
+            'metric': self.default_metric,
             'max_bootstrapped_demos': 4,
             'max_labeled_demos': 4
         }
+        
+    def default_metric(self, example, prediction, trace=None):
+        """Default metric function that checks exact match of predictions"""
+        score = 0
+        for key, value in example.items():
+            if key in prediction and prediction[key] == value:
+                score += 1
+        return score / len(example)
         self._teleprompters = {
             'bootstrap_few_shot': BootstrapFewShot,
             'mipro': MIPRO

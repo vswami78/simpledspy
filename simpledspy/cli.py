@@ -13,6 +13,8 @@ def main():
                        default='bootstrap_few_shot', help="Optimization strategy")
     parser.add_argument('--max-demos', type=int, default=4, 
                        help="Maximum number of demonstrations")
+    parser.add_argument('--metric', type=str,
+                       help="Custom metric function to use for optimization")
     
     args = parser.parse_args()
     

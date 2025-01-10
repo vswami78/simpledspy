@@ -113,17 +113,21 @@ class PipeFunction:
         finally:
             del frame
 
-    def __call__(self, *args, description: str = None) -> Any:
+    def __call__(self, *args, description: str = None, metric: Callable = None) -> Any:
         """
         Executes a DSPy module with the given signature.
         
         Args:
             *args: Input arguments
             description: Optional description of the module's purpose
+            metric: Optional metric function for optimization
             
         Returns:
             The output value
         """
+        # Configure metric if provided
+        if metric is not None:
+            self.optimization_manager.configure(metric=metric)
         # Get the input and output variable names
         input_names, output_names = self._get_caller_context(len(args))
         
