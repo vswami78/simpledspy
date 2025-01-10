@@ -34,7 +34,7 @@ def main():
         inputs = [line.strip() for line in sys.stdin]
     else:
         inputs = args.inputs
-    print("inputs:", inputs)
+    # print("inputs:", inputs)
         
     # Process inputs
     result = pipe(*inputs, description=args.description)
