@@ -138,7 +138,7 @@ class PipeFunction:
         
         # Handle multiple outputs if present
         output_values = []
-        for output_field in outputs:
+        for output_field in output_names:
             output_values.append(getattr(result, output_field))
             
         # Return single value or tuple of values
