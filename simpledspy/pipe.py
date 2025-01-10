@@ -96,16 +96,16 @@ class PipeFunction:
             input_names = [f"input_{i+1}" for i in range(len(args))]
             
         # Create module dynamically with correct output name
-        module = self._create_module(inputs, [output_name], description)
+        module = self._create_module(input_names, [output_name], description)
         
         # Create input dict
-        input_dict = {field: arg for field, arg in zip(inputs, args)}
+        input_dict = {field: arg for field, arg in zip(input_names, args)}
         
         # Execute module
         result = module(**input_dict)
         
         # Register step
-        self.pipeline_manager.register_step(inputs=inputs, outputs=[output_name], module=module)
+        self.pipeline_manager.register_step(inputs=input_names, outputs=[output_name], module=module)
         
         # Return the output value
         return getattr(result, output_name)
