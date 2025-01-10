@@ -68,10 +68,16 @@ class PipeFunction:
                 if instr.opname in ('LOAD_NAME', 'LOAD_FAST'):
                     # Skip function names and other non-inputs
                     if instr.argval not in ('pipe', 'print', 'self'):
-                        input_names.append(instr.argval)
+                        # Only add if it's one of our actual arguments
+                        if len(input_names) < len(args):
+                            input_names.append(instr.argval)
             
-            # Reverse to maintain original order
+            # Reverse to maintain original order and ensure correct count
             input_names = list(reversed(input_names))
+            
+            # If we didn't get enough names, fill with generic ones
+            if len(input_names) < len(args):
+                input_names.extend(f"input_{i+1}" for i in range(len(input_names), len(args)))
                 
             # Find the STORE_NAME/STORE_FAST opcode that follows our call
             output_name = None

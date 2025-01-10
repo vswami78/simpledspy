@@ -16,10 +16,12 @@ class ModuleFactory:
         """
         # Create signature fields with proper prefixes
         signature_fields = {}
-        for inp in inputs:
-            signature_fields[inp] = dspy.InputField(
-                prefix=f"{inp.capitalize()}:",
-                desc=f"Input field {inp}"
+        for i, inp in enumerate(inputs):
+            # Use the actual variable name if available, otherwise generic input_X
+            field_name = inp if not inp.startswith('input_') else f"input_{i+1}"
+            signature_fields[field_name] = dspy.InputField(
+                prefix=f"{field_name.capitalize()}:",
+                desc=f"Input field {field_name}"
             )
         for outp in outputs:
             signature_fields[outp] = dspy.OutputField(
