@@ -90,6 +90,7 @@ class PipeFunction:
         """
         # Get the input and output variable names
         input_names, output_name = self._get_caller_context()
+        print("input_names:", input_names)
         
         # Use actual input names if we found them, otherwise fall back to generic names
         if len(input_names) != len(args):
