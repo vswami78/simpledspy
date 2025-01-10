@@ -6,7 +6,7 @@ from .optimization_manager import OptimizationManager
 
 def main():
     parser = argparse.ArgumentParser(description="SimpleDSPy command line interface")
-    parser.add_argument('inputs', nargs='+', help="Input strings to process")
+    parser.add_argument('inputs', nargs='*', help="Input strings to process (use - for stdin)")
     parser.add_argument('-d', '--description', help="Description of the processing task")
     parser.add_argument('--optimize', action='store_true', help="Enable optimization")
     parser.add_argument('--strategy', choices=['bootstrap_few_shot', 'mipro'], 
@@ -29,8 +29,14 @@ def main():
         )
         # TODO: Add training data loading and optimization
     
+    # Handle stdin if '-' is provided
+    if args.inputs and args.inputs[0] == '-':
+        inputs = [line.strip() for line in sys.stdin]
+    else:
+        inputs = args.inputs
+        
     # Process inputs
-    result = pipe(*args.inputs, description=args.description)
+    result = pipe(*inputs, description=args.description)
     
     # Print results
     if isinstance(result, tuple):
