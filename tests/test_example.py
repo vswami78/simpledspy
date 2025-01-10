@@ -23,7 +23,7 @@ def test_module_creation():
     assert hasattr(module, 'signature')
     assert hasattr(module, 'forward')
     assert hasattr(module.signature, 'input_text')
-    assert hasattr(module.signature, 'output_length")
+    assert hasattr(module.signature, 'output_length')
 
 def test_pipeline_assembly():
     """Test assembling multiple modules into a pipeline"""
