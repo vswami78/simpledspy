@@ -1,18 +1,24 @@
+#!/usr/bin/env python3
+import sys
+import argparse
 from simpledspy import pipe
 
+def main():
+    parser = argparse.ArgumentParser(description="SimpleDSPy command line interface")
+    parser.add_argument('inputs', nargs='+', help="Input strings to process")
+    parser.add_argument('-d', '--description', help="Description of the processing task")
+    
+    args = parser.parse_args()
+    
+    # Process inputs
+    result = pipe(*args.inputs, description=args.description)
+    
+    # Print results
+    if isinstance(result, tuple):
+        for i, res in enumerate(result, 1):
+            print(f"Output {i}: {res}")
+    else:
+        print("Result:", result)
+
 if __name__ == "__main__":
-    # Test basic functionality
-    result = pipe("abc def ghi jkl")
-    print("Result:", result)  # Should print: abc def ghi jkl
-    
-    # Test third word extraction
-    third_word = pipe("abc def ghi jkl")
-    print("Third word:", third_word)  # Should print: ghi
-    
-    # Test concatenation
-    combined = pipe("Hello", "World")
-    print("Combined:", combined)  # Should print: Hello World
-    
-    # Test word count
-    word_count = pipe("This text has exactly five words")
-    print("Word count:", word_count)  # Should print: 5
+    main()

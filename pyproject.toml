@@ -10,6 +10,9 @@ homepage = "https://github.com/tomdoerr/simpledspy"
 repository = "https://github.com/tomdoerr/simpledspy"
 keywords = ["dspy", "llm", "pipeline", "nlp"]
 
+[tool.poetry.scripts]
+simpledspy = "main:main"
+
 [tool.poetry.dependencies]
 python = ">=3.9,<4.0"
 dspy = ">=2.5.0"
