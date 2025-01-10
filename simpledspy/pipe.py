@@ -41,8 +41,12 @@ class PipeFunction:
             description=description
         )
 
-    def _get_caller_context(self) -> Tuple[List[str], str]:
-        """Get the names of variables being passed and assigned."""
+    def _get_caller_context(self, num_args: int) -> Tuple[List[str], str]:
+        """Get the names of variables being passed and assigned.
+        
+        Args:
+            num_args: Number of arguments expected
+        """
         frame = inspect.currentframe()
         try:
             # Go up two frames to get the assignment context
@@ -69,15 +73,15 @@ class PipeFunction:
                     # Skip function names and other non-inputs
                     if instr.argval not in ('pipe', 'print', 'self'):
                         # Only add if it's one of our actual arguments
-                        if len(input_names) < len(args):
+                        if len(input_names) < num_args:
                             input_names.append(instr.argval)
             
             # Reverse to maintain original order and ensure correct count
             input_names = list(reversed(input_names))
             
             # If we didn't get enough names, fill with generic ones
-            if len(input_names) < len(args):
-                input_names.extend(f"input_{i+1}" for i in range(len(input_names), len(args)))
+            if len(input_names) < num_args:
+                input_names.extend(f"input_{i+1}" for i in range(len(input_names), num_args))
                 
             # Find the STORE_NAME/STORE_FAST opcode that follows our call
             output_name = None
@@ -111,7 +115,7 @@ class PipeFunction:
             The output value
         """
         # Get the input and output variable names
-        input_names, output_name = self._get_caller_context()
+        input_names, output_name = self._get_caller_context(len(args))
         print("input_names:", input_names)
         
         # Use actual input names if we found them, otherwise fall back to generic names
