@@ -1,7 +1,7 @@
 from typing import Any, Tuple, List, Callable, Dict
 import dspy
-from pipeline_manager import PipelineManager
-from module_factory import ModuleFactory
+from .pipeline_manager import PipelineManager
+from .module_factory import ModuleFactory
 import inspect
 import os
 import dis

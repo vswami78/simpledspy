@@ -1,5 +1,7 @@
-from .pipe import pipe
+from .pipe import PipeFunction
 from .pipeline_manager import PipelineManager
 from .module_factory import ModuleFactory
 
-__all__ = ['pipe', 'PipelineManager', 'ModuleFactory']
+pipe = PipeFunction()
+
+__all__ = ['pipe', 'PipelineManager', 'ModuleFactory', 'PipeFunction']
