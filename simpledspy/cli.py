@@ -29,8 +29,8 @@ def main():
         )
         # TODO: Add training data loading and optimization
     
-    # Handle stdin if '-' is provided
-    if args.inputs and args.inputs[0] == '-':
+    # Check if stdin has data
+    if not sys.stdin.isatty():
         inputs = [line.strip() for line in sys.stdin]
     else:
         inputs = args.inputs
