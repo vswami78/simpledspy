@@ -46,3 +46,19 @@ def test_cli_biggest_number():
     assert result.returncode == 0
     assert "563" in result.stdout
 
+def test_cli_stdin_biggest_number():
+    """Test CLI interface with stdin for finding biggest number"""
+    import subprocess
+    
+    # Run the CLI command with stdin
+    result = subprocess.run(
+        ['simpledspy', '-d', 'get the biggest number'],
+        input='54 563 125\n',
+        capture_output=True,
+        text=True
+    )
+    
+    # Check the output
+    assert result.returncode == 0
+    assert "563" in result.stdout
+
