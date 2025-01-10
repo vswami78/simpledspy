@@ -136,13 +136,14 @@ class PipeFunction:
         # Register step
         self.pipeline_manager.register_step(inputs=input_names, outputs=output_names, module=module)
         
+        # Get the actual output fields from the module's signature
+        output_fields = module.signature.output_fields
+        
         # Handle multiple outputs if present
-        output_values = []
-        for output_field in output_names:
-            output_values.append(getattr(result, output_field))
-            
-        # Return single value or tuple of values
-        return output_values[0] if len(output_values) == 1 else tuple(output_values)
+        if len(output_fields) == 1:
+            return getattr(result, list(output_fields.keys())[0])
+        else:
+            return tuple(getattr(result, field) for field in output_fields.keys())
 
 # Instantiate the pipe function
 pipe = PipeFunction()
