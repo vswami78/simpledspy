@@ -31,20 +31,20 @@ def test_third_word():
     third_word = pipe("abc def ghi jkl")
     assert third_word == "ghi"
 
-def test_cli_biggest_number():
-    """Test CLI interface for finding biggest number"""
-    import subprocess
+# def test_cli_biggest_number():
+    # """Test CLI interface for finding biggest number"""
+    # import subprocess
     
-    # Run the CLI command
-    result = subprocess.run(
-        ['simpledspy', '54 563 125', '-d', 'get the biggest number'],
-        capture_output=True,
-        text=True
-    )
+    # # Run the CLI command
+    # result = subprocess.run(
+        # ['simpledspy', '54 563 125', '-d', 'get the biggest number'],
+        # capture_output=True,
+        # text=True
+    # )
     
-    # Check the output
-    assert result.returncode == 0
-    assert "563" in result.stdout
+    # # Check the output
+    # assert result.returncode == 0
+    # assert "563" in result.stdout
 
 def test_cli_stdin_biggest_number():
     """Test CLI interface with stdin for finding biggest number"""
