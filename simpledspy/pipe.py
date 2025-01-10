@@ -41,22 +41,41 @@ class PipeFunction:
             description=description
         )
 
-    def _get_assignment_target(self) -> str:
-        """Get the name of the variable being assigned to."""
+    def _get_caller_context(self) -> Tuple[List[str], str]:
+        """Get the names of variables being passed and assigned."""
         frame = inspect.currentframe()
         try:
             # Go up two frames to get the assignment context
             outer_frame = frame.f_back.f_back
             # Get the bytecode for the current frame
             bytecode = dis.Bytecode(outer_frame.f_code)
-            # Find the STORE_NAME opcode that follows our call
+            
+            # Find the variable names being passed
+            input_names = []
             for instr in bytecode:
-                if instr.offset > outer_frame.f_lasti and instr.opname == 'STORE_NAME':
-                    return instr.argval
+                if instr.offset < outer_frame.f_lasti:
+                    if instr.opname in ('LOAD_NAME', 'LOAD_FAST'):
+                        input_names.append(instr.argval)
+                
+            # Find the STORE_NAME/STORE_FAST opcode that follows our call
+            output_name = None
+            for instr in bytecode:
+                if instr.offset > outer_frame.f_lasti:
+                    if instr.opname in ('STORE_NAME', 'STORE_FAST'):
+                        output_name = instr.argval
+                        break
+            
+            if not output_name:
+                raise ValueError("pipe must be called in an assignment context.")
+            
+            # Remove duplicates and the output name from inputs
+            input_names = list(dict.fromkeys(input_names))
+            if output_name in input_names:
+                input_names.remove(output_name)
+            
+            return input_names, output_name
         finally:
             del frame
-
-        raise ValueError("pipe must be called in an assignment context.")
 
     def __call__(self, *args, description: str = None) -> Any:
         """
@@ -69,12 +88,12 @@ class PipeFunction:
         Returns:
             The output value
         """
-        # Get the assignment target name
-        output_name = self._get_assignment_target()
-        # print("output_name:", output_name)
+        # Get the input and output variable names
+        input_names, output_name = self._get_caller_context()
         
-        # Infer input names from args
-        inputs = [f"input_{i+1}" for i in range(len(args))]
+        # Use actual input names if we found them, otherwise fall back to generic names
+        if len(input_names) != len(args):
+            input_names = [f"input_{i+1}" for i in range(len(args))]
             
         # Create module dynamically with correct output name
         module = self._create_module(inputs, [output_name], description)
