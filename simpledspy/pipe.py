@@ -122,8 +122,10 @@ class PipeFunction:
         if len(input_names) != len(args):
             input_names = [f"input_{i+1}" for i in range(len(args))]
             
-        # Create module dynamically with correct output name
-        module = self._create_module(input_names, [output_name], description)
+        # Create module dynamically with correct output names
+        # If output_name contains multiple names separated by commas, split them
+        output_names = [name.strip() for name in output_name.split(',')]
+        module = self._create_module(input_names, output_names, description)
         
         # Create input dict
         input_dict = {field: arg for field, arg in zip(input_names, args)}
@@ -132,10 +134,15 @@ class PipeFunction:
         result = module(**input_dict)
         
         # Register step
-        self.pipeline_manager.register_step(inputs=input_names, outputs=[output_name], module=module)
+        self.pipeline_manager.register_step(inputs=input_names, outputs=output_names, module=module)
         
-        # Return the output value
-        return getattr(result, output_name)
+        # Handle multiple outputs if present
+        output_values = []
+        for output_field in outputs:
+            output_values.append(getattr(result, output_field))
+            
+        # Return single value or tuple of values
+        return output_values[0] if len(output_values) == 1 else tuple(output_values)
 
 # Instantiate the pipe function
 pipe = PipeFunction()
