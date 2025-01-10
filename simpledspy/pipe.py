@@ -116,6 +116,7 @@ class PipeFunction:
         """
         # Get the input and output variable names
         input_names, output_name = self._get_caller_context(len(args))
+        print("output_name:", output_name)
         print("input_names:", input_names)
         
         # Use actual input names if we found them, otherwise fall back to generic names
@@ -132,6 +133,7 @@ class PipeFunction:
         
         # Execute module
         result = module(**input_dict)
+        print("result:", result)
         
         # Register step
         self.pipeline_manager.register_step(inputs=input_names, outputs=output_names, module=module)
