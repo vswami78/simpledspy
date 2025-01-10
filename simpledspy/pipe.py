@@ -138,12 +138,14 @@ class PipeFunction:
         
         # Get the actual output fields from the module's signature
         output_fields = module.signature.output_fields
+        print("output_fields:", output_fields)
         
         # Handle multiple outputs if present
-        if len(output_names) == 1:
-            return getattr(result, output_names[0])
+        print("len(output_fields):", len(output_fields))
+        if len(output_fields) == 1:
+            return getattr(result, list(output_fields.keys())[0])
         else:
-            return tuple(getattr(result, field) for field in output_names)
+            return tuple(getattr(result, field) for field in output_fields.keys())
 
 # Instantiate the pipe function
 pipe = PipeFunction()
