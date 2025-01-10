@@ -86,12 +86,18 @@ class PipeFunction:
             if len(input_names) < num_args:
                 input_names.extend(f"input_{i+1}" for i in range(len(input_names), num_args))
                 
-            # Find all STORE_NAME/STORE_FAST opcodes that follow our call
+            # Find STORE_NAME/STORE_FAST opcodes only for the current line
             output_names = []
+            current_line = outer_frame.f_lineno
             for instr in bytecode:
-                if instr.offset > outer_frame.f_lasti:
+                # Only look at instructions after our call and on the same line
+                if (instr.offset > outer_frame.f_lasti and 
+                    instr.positions.lineno == current_line):
                     if instr.opname in ('STORE_NAME', 'STORE_FAST'):
                         output_names.append(instr.argval)
+                        # Stop when we hit a different operation
+                        if instr.opname not in ('STORE_NAME', 'STORE_FAST'):
+                            break
             
             if not output_names:
                 raise ValueError("pipe must be called in an assignment context.")
