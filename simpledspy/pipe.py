@@ -31,7 +31,7 @@ class PipeFunction:
         # Configure default LM with caching disabled
         self.lm = dspy.LM(model="deepseek/deepseek-chat")
         dspy.configure(lm=self.lm, cache=False)
-        print(f"Initialized new PipeFunction at {self._location}")
+        # print(f"Initialized new PipeFunction at {self._location}")
 
     def _create_module(self, inputs: List[str], outputs: List[str], description: str = "") -> dspy.Module:
         """Create a DSPy module with the given signature."""
@@ -41,40 +41,22 @@ class PipeFunction:
             description=description
         )
 
-    def _get_caller_context(self) -> Tuple[List[str], str]:
-        """Get the input variable names and assignment target from the calling context."""
+    def _get_assignment_target(self) -> str:
+        """Get the name of the variable being assigned to."""
         frame = inspect.currentframe()
         try:
             # Go up two frames to get the assignment context
             outer_frame = frame.f_back.f_back
             # Get the bytecode for the current frame
             bytecode = dis.Bytecode(outer_frame.f_code)
-            
-            # Find the input variable names
-            input_names = []
-            # Get the local variables from the caller's frame
-            local_vars = set(outer_frame.f_locals.keys())
-            
-            # Scan bytecode for LOAD_NAME instructions that load local variables
-            for instr in bytecode:
-                if (instr.offset < outer_frame.f_lasti and 
-                    instr.opname == 'LOAD_NAME' and
-                    instr.argval in local_vars):
-                    input_names.append(instr.argval)
-            
             # Find the STORE_NAME opcode that follows our call
-            target_name = None
             for instr in bytecode:
                 if instr.offset > outer_frame.f_lasti and instr.opname == 'STORE_NAME':
-                    target_name = instr.argval
-                    break
-            
-            if not target_name:
-                raise ValueError("pipe must be called in an assignment context.")
-            
-            return input_names, target_name
+                    return instr.argval
         finally:
             del frame
+
+        raise ValueError("pipe must be called in an assignment context.")
 
     def __call__(self, *args, description: str = None) -> Any:
         """
@@ -87,24 +69,21 @@ class PipeFunction:
         Returns:
             The output value
         """
-        # Get the input names and assignment target from the calling context
-        input_names, output_name = self._get_caller_context()
+        # Get the assignment target name
+        output_name = self._get_assignment_target()
+        # print("output_name:", output_name)
         
-        # Use the actual variable names as input field names
-        inputs = input_names
+        # Infer input names from args
+        inputs = [f"input_{i+1}" for i in range(len(args))]
             
         # Create module dynamically with correct output name
         module = self._create_module(inputs, [output_name], description)
         
-        # Create input dict with proper field names
-        input_dict = {inp: arg for inp, arg in zip(inputs, args)}
+        # Create input dict
+        input_dict = {field: arg for field, arg in zip(inputs, args)}
         
-        # Execute module with the input dict
-        try:
-            result = module(**input_dict)
-        except Exception as e:
-            print(f"Error executing module: {e}")
-            raise
+        # Execute module
+        result = module(**input_dict)
         
         # Register step
         self.pipeline_manager.register_step(inputs=inputs, outputs=[output_name], module=module)
