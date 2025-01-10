@@ -1,7 +1,8 @@
-from typing import Any, Tuple, List, Callable, Dict
+from typing import Any, Tuple, List, Callable, Dict, Optional
 import dspy
 from .pipeline_manager import PipelineManager
 from .module_factory import ModuleFactory
+from .optimization_manager import OptimizationManager
 import inspect
 import os
 import dis
@@ -28,6 +29,7 @@ class PipeFunction:
         self._initialized = True
         self.pipeline_manager = PipelineManager()
         self.module_factory = ModuleFactory()
+        self.optimization_manager = OptimizationManager()
         # Configure default LM with caching disabled
         self.lm = dspy.LM(model="deepseek/deepseek-chat")
         dspy.configure(lm=self.lm, cache=False)
