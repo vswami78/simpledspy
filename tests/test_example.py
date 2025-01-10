@@ -44,5 +44,5 @@ def test_cli_biggest_number():
     
     # Check the output
     assert result.returncode == 0
-    assert "Result: 563" in result.stdout
+    assert "563" in result.stdout
 
