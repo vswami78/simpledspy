@@ -34,10 +34,10 @@ def main():
     
     # Print results
     if isinstance(result, tuple):
-        for i, res in enumerate(result, 1):
-            print(f"Output {i}: {res}")
+        for res in result:
+            print(res)
     else:
-        print("Result:", result)
+        print(result)
 
 if __name__ == "__main__":
     main()
