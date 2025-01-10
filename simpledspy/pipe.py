@@ -52,10 +52,26 @@ class PipeFunction:
             
             # Find the variable names being passed
             input_names = []
-            for instr in bytecode:
-                if instr.offset < outer_frame.f_lasti:
-                    if instr.opname in ('LOAD_NAME', 'LOAD_FAST'):
+            seen_ops = set()
+            
+            # Walk backwards through instructions to find actual inputs
+            for instr in reversed(list(bytecode)):
+                if instr.offset >= outer_frame.f_lasti:
+                    continue
+                    
+                # Skip if we've already seen this operation
+                if instr.offset in seen_ops:
+                    continue
+                seen_ops.add(instr.offset)
+                
+                # Only include LOAD operations that are actual inputs
+                if instr.opname in ('LOAD_NAME', 'LOAD_FAST'):
+                    # Skip function names and other non-inputs
+                    if instr.argval not in ('pipe', 'print', 'self'):
                         input_names.append(instr.argval)
+            
+            # Reverse to maintain original order
+            input_names = list(reversed(input_names))
                 
             # Find the STORE_NAME/STORE_FAST opcode that follows our call
             output_name = None
