@@ -164,11 +164,30 @@ class PipeFunction:
         # Register step
         self.pipeline_manager.register_step(inputs=input_names, outputs=output_names, module=module)
         
-        # Handle outputs based on the output_names list
-        if len(output_names) == 1:
-            return getattr(result, output_names[0])
-        else:
-            return tuple(getattr(result, field) for field in output_names)
+        # Handle outputs based on the output_names list with type conversion
+        outputs = []
+        for field in output_names:
+            value = getattr(result, field)
+            if output_types and field in output_types:
+                output_type = output_types[field]
+                try:
+                    # Convert value to specified type
+                    if output_type is int:
+                        value = int(value)
+                    elif output_type is float:
+                        value = float(value)
+                    elif output_type is bool:
+                        value = bool(value)
+                    elif output_type is str:
+                        value = str(value)
+                except (ValueError, TypeError):
+                    # If conversion fails, keep original value
+                    pass
+            outputs.append(value)
+            
+        if len(outputs) == 1:
+            return outputs[0]
+        return tuple(outputs)
 
 # Instantiate the pipe function
 pipe = PipeFunction()
