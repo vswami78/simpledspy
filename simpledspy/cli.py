@@ -37,16 +37,16 @@ def main():
         
     # Process inputs
     if len(inputs) == 1:
-        result = pipe(inputs[0], description=args.description)
+        answer = pipe(inputs[0], description=args.description)
     else:
-        result = pipe(*inputs, description=args.description)
+        answer = pipe(*inputs, description=args.description)
     
     # Print results
-    if isinstance(result, tuple):
-        for res in result:
+    if isinstance(answer, tuple):
+        for res in answer:
             print(res)
     else:
-        print(result)
+        print(answer)
 
 if __name__ == "__main__":
     main()
