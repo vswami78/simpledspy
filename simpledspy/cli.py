@@ -15,6 +15,8 @@ def main():
                        help="Maximum number of demonstrations")
     parser.add_argument('--metric', type=str,
                        help="Custom metric function to use for optimization")
+    parser.add_argument('--types', action='store_true',
+                       help="Enable type checking for inputs and outputs")
     
     args = parser.parse_args()
     
@@ -36,11 +38,21 @@ def main():
     else:
         inputs = args.inputs
         
-    # Process inputs with proper type handling
+    # Process inputs with optional type handling
     if len(inputs) == 1:
-        result = pipe(inputs[0], description=args.description)
+        result = pipe(
+            inputs[0], 
+            description=args.description,
+            input_types={'text': str} if args.types else None,
+            output_types={'result': str} if args.types else None
+        )
     else:
-        result = pipe(*inputs, description=args.description)
+        result = pipe(
+            *inputs, 
+            description=args.description,
+            input_types=[{'text': str}] * len(inputs) if args.types else None,
+            output_types={'result': str} if args.types else None
+        )
     
     # Print results
     if isinstance(result, tuple):
