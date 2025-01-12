@@ -31,13 +31,16 @@ def main():
     
     # Check if stdin has data
     if not sys.stdin.isatty():
-        inputs = [line.strip() for line in sys.stdin]
+        input_text = sys.stdin.read().strip()
+        inputs = [input_text]
     else:
         inputs = args.inputs
-    # print("inputs:", inputs)
         
-    # Process inputs
-    result = pipe(*inputs, description=args.description)
+    # Process inputs with proper type handling
+    if len(inputs) == 1:
+        result = pipe(inputs[0], description=args.description)
+    else:
+        result = pipe(*inputs, description=args.description)
     
     # Print results
     if isinstance(result, tuple):
