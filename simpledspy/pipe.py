@@ -113,7 +113,9 @@ class PipeFunction:
         finally:
             del frame
 
-    def __call__(self, *args, description: str = None, metric: Callable = None) -> Any:
+    def __call__(self, *args, description: str = None, metric: Callable = None, 
+                input_types: Dict[str, type] = None,
+                output_types: Dict[str, type] = None) -> Any:
         """
         Executes a DSPy module with the given signature.
         
@@ -121,6 +123,8 @@ class PipeFunction:
             *args: Input arguments
             description: Optional description of the module's purpose
             metric: Optional metric function for optimization
+            input_types: Dictionary mapping input names to types
+            output_types: Dictionary mapping output names to types
             
         Returns:
             The output value
@@ -128,8 +132,18 @@ class PipeFunction:
         # Configure metric if provided
         if metric is not None:
             self.optimization_manager.configure(metric=metric)
+            
         # Get the input and output variable names
         input_names, output_names = self._get_caller_context(len(args))
+        
+        # Create module with type hints
+        module = self._create_module(
+            input_names, 
+            output_names,
+            input_types=input_types,
+            output_types=output_types,
+            description=description
+        )
         
         # Use actual input names if we found them, otherwise fall back to generic names
         if len(input_names) != len(args):
