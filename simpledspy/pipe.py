@@ -34,11 +34,16 @@ class PipeFunction:
         self.lm = dspy.LM(model="deepseek/deepseek-chat")
         dspy.configure(lm=self.lm, cache=False)
 
-    def _create_module(self, inputs: List[str], outputs: List[str], description: str = "") -> dspy.Module:
+    def _create_module(self, inputs: List[str], outputs: List[str], 
+                     input_types: Dict[str, type] = None,
+                     output_types: Dict[str, type] = None,
+                     description: str = "") -> dspy.Module:
         """Create a DSPy module with the given signature."""
         return self.module_factory.create_module(
             inputs=inputs,
             outputs=outputs,
+            input_types=input_types,
+            output_types=output_types,
             description=description
         )
 
