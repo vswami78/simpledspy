@@ -62,3 +62,22 @@ def test_cli_stdin_biggest_number():
     assert result.returncode == 0
     assert "563" in result.stdout
 
+def test_type_hints():
+    """Test type hint support in pipe function"""
+    text = "John Doe, 30 years old"
+    
+    # Test with type hints
+    str: name = pipe(text, input_types={'text': str}, output_types={'name': str})
+    assert isinstance(name, str)
+    
+    # Test with multiple outputs and types
+    str: name, int: age = pipe(
+        text,
+        input_types={'text': str},
+        output_types={'name': str, 'age': int}
+    )
+    assert isinstance(name, str)
+    assert isinstance(age, int)
+    assert name == "John Doe"
+    assert age == 30
+
