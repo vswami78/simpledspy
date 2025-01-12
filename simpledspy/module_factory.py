@@ -23,7 +23,12 @@ class ModuleFactory:
         
         # Create input fields with type hints
         for inp in inputs:
-            field_type = input_types.get(inp) if input_types else None
+            # Handle input types safely
+            if input_types and isinstance(input_types, dict):
+                field_type = input_types.get(inp)
+            else:
+                field_type = None
+                
             desc = f"Input field {inp}"
             if field_type:
                 desc += f" of type {field_type.__name__}"
