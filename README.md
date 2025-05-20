@@ -69,6 +69,8 @@ The `pipe` function automatically:
 4. Returns processed outputs
 
 ## Architecture (credit: gitdiagram)
+
+```mermaid
 flowchart TD
     %% User
     User["User (Script/CLI)"]:::external
@@ -130,7 +132,7 @@ flowchart TD
     classDef api fill:#FFD700,stroke:#333,stroke-width:1px
     classDef core fill:#ADFF2F,stroke:#333,stroke-width:1px
     classDef external fill:#87CEFA,stroke:#333,stroke-width:1px
-
+```
 ## Contributing
 
 Contributions are welcome! Please open an issue or pull request on GitHub.
