@@ -129,8 +129,8 @@ flowchart TD
     click Plan "https://github.com/vswami78/simpledspy/blob/main/plan.md"
 
     %% Styles
-    classDef api fill:#FF7100,stroke:#333,stroke-width:1px
-    classDef core fill:#812FFF,stroke:#333,stroke-width:1px
+    classDef api fill:#812FFF,stroke:#333,stroke-width:1px
+    classDef core fill:#FF7100,stroke:#333,stroke-width:1px
     classDef external fill:#CA87FA,stroke:#333,stroke-width:1px
 ```
 ## Contributing
